@@ -14,24 +14,24 @@ const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
 app.get('/api/hello', async (req, res) => {
   const visitorName = req.query.visitor_name || 'Visitor';
 
-  // // Extracting client IP
-  // let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null);
+  // Extracting client IP
+  let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
   // Handling multiple IPs or IPv6 formats
-  // if (clientIp && clientIp.includes(',')) {
-  //   clientIp = clientIp.split(',')[0];
-  // }
+  if (clientIp && clientIp.includes(',')) {
+    clientIp = clientIp.split(',')[0];
+  }
 
-  // if (clientIp && clientIp.includes(':')) {
-  //   const ipv6Segments = clientIp.split(':');
-  //   clientIp = ipv6Segments[ipv6Segments.length - 1];
-  // }
+  if (clientIp && clientIp.includes(':')) {
+    const ipv6Segments = clientIp.split(':');
+    clientIp = ipv6Segments[ipv6Segments.length - 1];
+  }
 
   // Use a fallback IP for local development
-  // if (clientIp === '::1' || clientIp === '127.0.0.1' || !clientIp) {
-  //   clientIp = '8.8.8.8'; // Google Public DNS IP as fallback
-  // }
-  let clientIp = "127.0.0.1"
+  if (clientIp === '::1' || clientIp === '127.0.0.1' || !clientIp) {
+    clientIp = '8.8.8.8'; // Google Public DNS IP as fallback
+  }
+  // let clientIp = "127.0.0.1"
   
   console.log('Client IP:', clientIp);
 
