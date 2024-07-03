@@ -12,7 +12,7 @@ const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
 
 app.get('/api/hello', async (req, res) => {
-  console.log(req.ip)
+  console.log(req.headers['x-forwarded-for'] )
   const visitorName = req.query.visitor_name || 'Visitor';
 
   // Extracting client IP
