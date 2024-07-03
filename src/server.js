@@ -42,6 +42,7 @@ app.get('/api/hello', async (req, res) => {
         const temperature = weatherResponse.data.main.temp;
         
         res.json({
+          `Hi, ${visitorName}. your Ip Address is ${clientIp}. you are from ${city} and your ambient temperature is ${temperature}`
           my_Ip_address: clientIp,
             city: city,
             temperature: temperature,
