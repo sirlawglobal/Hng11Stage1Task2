@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const realip = require('req-real-ip');
 const app = express();
 require('dotenv').config();
 const cors = require('cors');
@@ -8,42 +9,31 @@ const cors = require('cors');
 app.use(cors());
 app.set('trust proxy', true);
 
+// Middleware to detect real IP
+app.use((req, res, next) => {
+  req.realIp = realip.detect({ req: req, config: { cloudflare: false } });
+  next();
+});
+
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
 
 app.get('/api/hello', async (req, res) => {
-  console.log(req.ip)
   const visitorName = req.query.visitor_name || 'Visitor';
+  let clientIp = req.realIp;
 
-  // Extracting client IP
-  // let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null);
+  // Fallback IP for local testing
+  if (!clientIp || clientIp === '::1' || clientIp === '127.0.0.1') {
+    clientIp = '8.8.8.8'; // Example IP address (Google Public DNS)
+  }
 
-  // Handling multiple IPs or IPv6 formats
-
-  // if (clientIp && clientIp.includes(',')) {
-  //   clientIp = clientIp.split(',')[0];
-  // }
-
-  // if (clientIp && clientIp.includes(':')) {
-  //   const ipv6Segments = clientIp.split(':');
-  //   clientIp = ipv6Segments[ipv6Segments.length - 1];
-  // }
-
-  // Use a fallback IP for local development
-  // if (clientIp === '::1' || clientIp === '127.0.0.1' || !clientIp) {
-  //   clientIp = '8.8.8.8'; // Google Public DNS IP as fallback
-  // }
-
-  let clientIp = req.ip;
-  
-  // console.log('Client IP:', clientIp);
-
-  // console.log(req.ip)
+  console.log('Client IP:', clientIp); // Log client IP address
 
   try {
     const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
-    console.log('Location Response:', locationResponse.data);
-
+    
+    console.log('Location Response:', locationResponse.data); // Log location response
+    
     const { city } = locationResponse.data.location;
 
     if (!city) {
@@ -70,7 +60,6 @@ app.listen(PORT, () => {
 });
 
 
-
 // const express = require('express');
 // const axios = require('axios');
 // const app = express();
@@ -81,25 +70,20 @@ app.listen(PORT, () => {
 // app.use(cors());
 // app.set('trust proxy', true);
 
-// // const OPENWEATHER_API_KEY = "92761e2b9d95a244e834ca63858c1e12";
-
-// // const IPIFY_API_KEY = "at_DMF2M80RJXe83Y4vMv5eonvaCV0LF";
-
 // const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-
 // const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
 
-// // const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-// // const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
-
 // app.get('/api/hello', async (req, res) => {
+//   console.log(req.ip)
 //   const visitorName = req.query.visitor_name || 'Visitor';
 
-//   let clientIp = req.ip
+ 
+
+//   let clientIp = req.ip;
   
+//   // console.log('Client IP:', clientIp);
 
-
-//   console.log('Client IP:', clientIp);
+//   // console.log(req.ip)
 
 //   try {
 //     const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
