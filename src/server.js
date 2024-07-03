@@ -1,9 +1,32 @@
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// app.use(cors());
+
+// Cor blocking
+const corConfig = {
+  origin:true,
+  credentials:true,
+  allowHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "X-Access-Token",
+    "Authorization",
+    "Access-Control-Allow-origin"
+  ] 
+}
+
+
+// Middleware
+// app.use(bodyParser.json());
+app.use(cors(corConfig));
+
 
 // Helper function to get the user's IP address
 const getClientIp = (req) => {
@@ -41,8 +64,17 @@ app.get('/api/hello', async (req, res) => {
 
         const temperature = weatherResponse.data.main.temp;
         
-        res.json({"message":`Hi, ${visitorName}. I  know this about you.  Your Ip Address is ${clientIp}. You are from ${city} and your ambient temperature is ${temperature} :)`
+        res.json({
+
+          "client_ip": `${clientIp}`, 
+          
+          "location": `${city}`, 
+
+          "greeting": `Hello, ${visitorName}! the temperature is ${temperature} degrees Celcius in ${city}`
+       
+
         });
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to fetch weather data' });
