@@ -1,0 +1,157 @@
+#  const apiKey = 'at_DMF2M80RJXe83Y4vMv5eonvaCV0LF'; // Replace with your API key
+#   const url = `https://geo.ipify.org/api/v1?apiKey=${apiKey}&ipAddress=${ipAddress}`;
+
+
+
+Netblock	Company	Num of IPs
+103.170.17.0/24	ONDO LLC	256
+103.212.162.0
+
+
+
+
+{
+  "version": 2,
+  "routes": [
+    { "src": "/src/server", "dest": "/src/server.js" }
+  ]
+}
+
+
+
+{ "src": "/api/hello", "dest": "/api/hello.js" }
+
+
+{
+  "version": 2,
+  "builds": [
+    { "src": "src/server.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/*", "dest": "src/server.js" }
+  ],
+  "env": {
+    "WHOISXML_API_KEY": "@WHOISXML_API_KEY",
+    "OPENWEATHER_API_KEY": "@OPENWEATHER_API_KEY"
+  }
+}
+
+
+//   let clientIp;
+// if (req.headers['x-forwarded-for']) {
+
+//   clientIp = req.headers['x-forwarded-for'].split(",")[0];
+// } else if (req.connection && req.connection.remoteAddress) {
+//   clientIp = req.connection.remoteAddress;
+// } else {
+
+//   clientIp = req.ip;
+// }
+
+// console.log("client IP is *********************" + ip);
+
+
+
+  // let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  // if (clientIp === '::1' || clientIp === '127.0.0.1') {
+  //   clientIp = '8.8.8.8'; // Example IP address (Google Public DNS)
+  // }
+
+
+
+ // let clientIp = req.ip;
+
+  // Fallback IP for local testing
+  // if (clientIp === '::1' || clientIp === '127.0.0.1') {
+  //   clientIp = '8.8.8.8'; // Example IP address (Google Public DNS)
+  // }
+
+
+
+
+// const express = require('express');
+// const axios = require('axios');
+// const app = express();
+// require('dotenv').config();
+// const cors = require('cors');
+
+// // Use the cors middleware
+// app.use(cors());
+// app.set('trust proxy', true);
+
+// const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+// const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
+
+// app.get('/api/hello', async (req, res) => {
+//   const visitorName = req.query.visitor_name || 'Visitor';
+
+
+//   let ip = request.headers['x-forwarded-for'] ||
+//   request.connection.remoteAddress ||
+//   request.socket.remoteAddress ||
+//   request.connection.socket.remoteAddress;
+// ipx = ip.split(',')[0];
+// clientIp = ipx.split(':').slice(-1);
+
+ 
+
+
+
+
+
+
+//   console.log('Client IP:', clientIp); // Log client IP address
+
+//   try {
+//     const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
+    
+//     console.log('Location Response:', locationResponse.data); // Log location response
+    
+//     const { city } = locationResponse.data.location;
+
+//     if (!city) {
+//       return res.status(400).json({ error: 'City not found for the given IP address' });
+//     }
+
+//     const weatherResponse = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${OPENWEATHER_API_KEY}`);
+//     const temperature = weatherResponse.data.main.temp;
+
+//     res.json({
+//       client_ip: clientIp,
+//       location: city,
+//       greeting: `Hello, ${visitorName}! The temperature is ${temperature} degrees Celsius in ${city}`
+//     });
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+
+
+
+  
+  // if (clientIp === '::1' || clientIp === '127.0.0.1') {
+  //   clientIp = '8.8.8.8'; // Example IP address (Google Public DNS)
+  // }else{
+  //      clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
+  // }
+
+
+
+  // Handle the case where the client IP might be an array of IPs (proxy chain)
+  // if (clientIp.includes(',')) {
+  //   clientIp = clientIp.split(',')[0];
+  // }
+
+  // Remove IPv6 prefix if present
+  // if (clientIp.includes(':')) {
+  //   clientIp = clientIp.split(':').slice(-1)[0];
+  // }
+
+  // Fallback IP for local testing
+

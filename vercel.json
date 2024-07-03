@@ -1,6 +1,10 @@
 {
   "version": 2,
+  "builds": [
+    { "src": "src/*.js", "use": "@vercel/node" ,
+  "config": { "includeFiles": ["dist/**"] }}
+  ],
   "routes": [
-    { "src": "/api/hello", "dest": "/api/hello.js" }
+    { "src": "/api/hello", "dest": "/src/server.js" }
   ]
 }

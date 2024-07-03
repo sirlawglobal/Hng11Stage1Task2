@@ -4,31 +4,44 @@ const app = express();
 require('dotenv').config();
 const cors = require('cors');
 
-
-
 // Use the cors middleware
 app.use(cors());
+app.set('trust proxy', true);
 
+const OPENWEATHER_API_KEY = "92761e2b9d95a244e834ca63858c1e12";
 
-// const WHOISXML_API_KEY = "at_DMF2M80RJXe83Y4vMv5eonvaCV0LF";
+const IPIFY_API_KEY = "at_DMF2M80RJXe83Y4vMv5eonvaCV0LF";
 
- const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-
-const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
+// const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+// const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
 
 app.get('/api/hello', async (req, res) => {
-  const visitorName = req.query.visitor_name || 
-  'Visitor';
+  const visitorName = req.query.visitor_name || 'Visitor';
+
+  let clientIp = "41.203.78.171"
   
-  let clientIp = req.ip;
+  // Extracting client IP
+  // let clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
-console.log(clientIp)
-  console.log('IPIFY_API_KEY:', process.env.IPIFY_API_KEY);
-  console.log('OPENWEATHER_API_KEY:', process.env.OPENWEATHER_API_KEY);
+  // Handling multiple IPs or IPv6 formats
+  // if (clientIp && clientIp.includes(',')) {
+  //   clientIp = clientIp.split(',')[0];
+  // }
 
+  // if (clientIp && clientIp.includes(':')) {
+  //   clientIp = clientIp.split(':').slice(-1)[0];
+  // }
+
+  // Use a fallback IP for local development
+  // if (clientIp === '::1' || clientIp === '127.0.0.1') {
+  //   clientIp = '8.8.8.8'; // Google Public DNS IP as fallback
+  // }
+
+  console.log('Client IP:', clientIp);
 
   try {
     const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
+    console.log('Location Response:', locationResponse.data);
 
     const { city } = locationResponse.data.location;
 
@@ -42,10 +55,10 @@ console.log(clientIp)
     res.json({
       client_ip: clientIp,
       location: city,
-      greeting: `Hello, ${visitorName}!, the temperature is ${temperature} degrees Celsius in ${city}`
+      greeting: `Hello, ${visitorName}! The temperature is ${temperature} degrees Celsius in ${city}`
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -56,23 +69,62 @@ app.listen(PORT, () => {
 });
 
 
+
+
 // const express = require('express');
+// const axios = require('axios');
 // const app = express();
-// const port = 8000;
+// require('dotenv').config();
+// const cors = require('cors');
 
-// app.get('/api/hello', (req, res) => {
-//   const visitorName = req.query.visitor_name;
-//   if (!visitorName) {
-//     return res.status(400).send('Visitor name is required');
+// // Use the cors middleware
+// app.use(cors());
+// app.set('trust proxy', true);
+
+// const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+// const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
+
+//   app.get('/api/hello', async (req, res) => {
+
+//   const visitorName = req.query.visitor_name || 'Visitor';
+
+ 
+//   let ip = req.headers['x-forwarded-for'] ||
+//   req.connection.remoteAddress ||
+//   req.socket.remoteAddress ||
+//   req.connection.socket.remoteAddress;
+// ipx = ip.split(',')[0];
+// clientIp = ipx.split(':').slice(-1);
+
+
+
+//   console.log('Client IP:', clientIp); // Log client IP address
+
+//   try {
+//     const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
+//     console.log('Location Response:', locationResponse.data); // Log location response
+
+//     const { city } = locationResponse.data.location;
+
+//     if (!city) {
+//       return res.status(400).json({ error: 'City not found for the given IP address' });
+//     }
+
+//     const weatherResponse = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${OPENWEATHER_API_KEY}`);
+//     const temperature = weatherResponse.data.main.temp;
+
+//     res.json({
+//       client_ip: clientIp,
+//       location: city,
+//       greeting: `Hello, ${visitorName}! The temperature is ${temperature} degrees Celsius in ${city}`
+//     });
+//   } catch (error) {
+//     console.error('Error:', error.response ? error.response.data : error.message);
+//     res.status(500).json({ error: 'Internal Server Error' });
 //   }
-//   res.send(`Hello, ${visitorName}!`);
 // });
 
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send('Something broke!');
-// });
-
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
 // });
