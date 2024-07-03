@@ -12,7 +12,7 @@ const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const IPIFY_API_KEY = process.env.IPIFY_API_KEY;
 
 app.get('/api/hello', async (req, res) => {
-  console.log(req.headers['x-forwarded-for'] )
+  console.log(req.ip)
   const visitorName = req.query.visitor_name || 'Visitor';
 
   // Extracting client IP
@@ -34,32 +34,34 @@ app.get('/api/hello', async (req, res) => {
   //   clientIp = '8.8.8.8'; // Google Public DNS IP as fallback
   // }
 
-  // let clientIp = "127.0.0.1"
+  let clientIp = req.ip;
   
   // console.log('Client IP:', clientIp);
 
-//   try {
-//     const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
-//     console.log('Location Response:', locationResponse.data);
+  // console.log(req.ip)
 
-//     const { city } = locationResponse.data.location;
+  try {
+    const locationResponse = await axios.get(`https://geo.ipify.org/api/v1?apiKey=${IPIFY_API_KEY}&ipAddress=${clientIp}`);
+    console.log('Location Response:', locationResponse.data);
 
-//     if (!city) {
-//       return res.status(400).json({ error: 'City not found for the given IP address' });
-//     }
+    const { city } = locationResponse.data.location;
 
-//     const weatherResponse = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${OPENWEATHER_API_KEY}`);
-//     const temperature = weatherResponse.data.main.temp;
+    if (!city) {
+      return res.status(400).json({ error: 'City not found for the given IP address' });
+    }
 
-//     res.json({
-//       client_ip: clientIp,
-//       location: city,
-//       greeting: `Hello, ${visitorName}! The temperature is ${temperature} degrees Celsius in ${city}`
-//     });
-//   } catch (error) {
-//     console.error('Error:', error.response ? error.response.data : error.message);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
+    const weatherResponse = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${OPENWEATHER_API_KEY}`);
+    const temperature = weatherResponse.data.main.temp;
+
+    res.json({
+      client_ip: clientIp,
+      location: city,
+      greeting: `Hello, ${visitorName}! The temperature is ${temperature} degrees Celsius in ${city}`
+    });
+  } catch (error) {
+    console.error('Error:', error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
